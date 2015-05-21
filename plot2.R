@@ -1,6 +1,6 @@
 
 # This code prepares a plot showing the total PM2.5 emission from all sources 
-# for each of the years 1999, 2002, 2005, and 2008.
+# in Baltimore City for each of the years 1999, 2002, 2005, and 2008.
 
 setwd("~/datacourse/Exploratory/ExData_Plotting2")
 require(dplyr)
