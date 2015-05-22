@@ -24,23 +24,38 @@ SCCcars$SCC <- as.character(SCCcars$SCC)
 
 SCCcars <- select(SCCcars, SCC, EI.Sector, SCC.Level.One, SCC.Level.Two)
 
+#carve down NEI to include only MV rows from desired cities
 NEIcars <- NEI[NEI$SCC %in% SCCcars$SCC, ]
+NEIcars <- filter(NEIcars, (fips == "24510" | fips == "06037"))
+
+#join
 NEIcars_joined <- left_join(NEIcars, SCCcars, by = "SCC")
 
 # Build data set and create category labels that fit and are still meaningful
-q5data <- NEIcars_joined %>% 
-        group_by(year, EI.Sector) %>% 
+q6data <- NEIcars_joined %>% 
+        group_by(fips, year) %>% 
         summarise("total" = sum(Emissions)) %>%
-        mutate("Source" = as.character(EI.Sector)) %>%
-        mutate("Source" = gsub("Mobile - On-Road ", "", Source)) %>%
-        mutate("Source" = gsub(" Vehicles", "", Source)) %>%
-        arrange(desc(total))
+        arrange(year) %>% 
+        mutate(pctchange = (total - lag(total))/total*100)
+
+# Add real city names
+cities <- data.frame(fips = (c("06037", "24510")), 
+                     City = (c("Los Angeles County", "Baltimore City")),
+                     stringsAsFactors = FALSE)
+q6data <- left_join(q6data, cities, by = "fips")
 
 # Set up and plot
-ggplot(q5data, aes(year, total)) +
-        geom_area(aes(fill = Source, ymax = 1.3 * max(total)), position = "stack") +
+ggplot(q6data, aes(year, total)) +
+        geom_line(aes(color = City)) +
         xlab("Year") +
         ylab("Total Emissions (tons)") +
-        ggtitle("Baltimore MV Emissions")
+        ggtitle("Annual Motor Vehicle Emissions") +
+        geom_point(aes(color = City))+
+        geom_text(aes(label=ifelse(!is.na(pctchange),
+                                paste("(",ifelse(pctchange>0, "+", ""), 
+                                      as.character(round(pctchange,1)),"%)", sep = ''),
+                                '')),
+                                hjust=1, vjust=1, size = 3)
+
         
-ggsave("plot5.png", width=8, height=5, dpi=100)
+ggsave("plot6.png", width=8, height=5, dpi=100)
