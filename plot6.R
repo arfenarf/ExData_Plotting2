@@ -1,6 +1,6 @@
 
 # This code prepares a plot showing the change in motor vehicle source
-# emissions in Baltimore City
+# emissions in Baltimore City and Los Angeles County
 
 setwd("~/datacourse/Exploratory/ExData_Plotting2")
 require(dplyr)
