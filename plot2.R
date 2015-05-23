@@ -20,7 +20,7 @@ par(mar = c(5.1 4.1 4.1 2.1)
 png(filename = "plot2.png")
 barplot(q2data$Total, names = q2data$year, xlab = "Year", 
         ylab = "PM2.5 Emissions (tons)", main = "Total Annual PM2.5 Emissions",
-        sub = "Baltimore City, MD")
+        sub = "Baltimore City, MD", ylim = c(0, max(q2data$Total)* 1.1))
 
 #close the file
 dev.off()

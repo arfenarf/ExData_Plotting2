@@ -1,6 +1,6 @@
 
 # This code prepares a plot showing the change in coal-combustion source
-# missions 
+# emissions 
 
 setwd("~/datacourse/Exploratory/ExData_Plotting2")
 require(dplyr)
@@ -31,16 +31,17 @@ NEIcoal_joined <- left_join(NEIcoal, SCCcoal, by = "SCC")
 
 q4data <- NEIcoal_joined %>% 
         group_by(year, EI.Sector) %>% 
-        summarise("total" = sum(Emissions)) %>%
-        arrange(desc(total)) %>%
-        mutate("Source" = as.character(EI.Sector)) %>%
+        summarise(total_emissions = sum(Emissions)) %>%
+        mutate(cropped_emissions = total_emissions/1000) %>% #get to human-friendly units
+        arrange(desc(cropped_emissions)) %>%                 #stack it well
+        mutate("Source" = as.character(EI.Sector)) %>%       #make a nice label
         mutate("Source" = gsub("Fuel Comb - ", "", Source))
 
 # Set up and plot
-ggplot(q4data, aes(year, total)) +
-        geom_area(aes(fill = Source, ymax = 1.3 * max(total)), position = "stack") +
+ggplot(q4data, aes(year, cropped_emissions)) +
+        geom_area(aes(fill = Source, ymax = 1.3 * max(cropped_emissions)), position = "stack") +
         xlab("Year") +
-        ylab("Total Emissions (tons)") +
+        ylab("Total Emissions (1000s of tons)") +
         ggtitle("Coal-Combustion Emissions") 
 
 

@@ -1,5 +1,5 @@
 
-# This code prepares a plot showing the change in motor vehicle source
+# This code prepares a plot comparing the change in motor vehicle source
 # emissions in Baltimore City and Los Angeles County
 
 setwd("~/datacourse/Exploratory/ExData_Plotting2")
@@ -36,7 +36,7 @@ q6data <- NEIcars_joined %>%
         group_by(fips, year) %>% 
         summarise("total" = sum(Emissions)) %>%
         arrange(year) %>% 
-        mutate(pctchange = (total - lag(total))/total*100)
+        mutate(pctchange = (total - lag(total))/total*100) # calculate y/y % Change
 
 # Add real city names
 cities <- data.frame(fips = (c("06037", "24510")), 
